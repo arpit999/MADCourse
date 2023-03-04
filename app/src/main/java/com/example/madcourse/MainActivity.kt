@@ -11,9 +11,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import com.example.madcourse.ui.theme.MADCourseTheme
 
 class MainActivity : ComponentActivity() {
@@ -21,29 +23,44 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MADCourseTheme {
-                MyApp()
+                CounterApp()
             }
         }
     }
 }
 
 @Composable
-fun MyApp() {
-    val clickCounter by remember { mutableStateOf("CLICK COUNTER") }
+fun CounterApp() {
+    var counter by remember { mutableStateOf(0) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    /**
+     * Heart of this program. It will identify lifeCycle events within Composable and reset counter on OnStop lifecycle event
+     */
+    LaunchedEffect(lifecycleOwner.lifecycle) {
+        lifecycleOwner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onStop(owner: LifecycleOwner) {
+                counter = 0
+            }
+        })
+    }
+
     // A surface container using the 'background' color from the theme
     Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-        AppContent(clickCounter)
+        CounterAppContent(counter) {
+            counter++
+        }
     }
 }
 
 
 @Composable
-fun AppContent(clickCounter: String) {
+fun CounterAppContent(clickCounter: Int, onButtonClicked: () -> Unit) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = clickCounter)
+        Text(text = " Click count $clickCounter")
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
         Button(
             border = BorderStroke(3.dp, Color.Blue.copy(alpha = 0.5f)),
@@ -52,9 +69,9 @@ fun AppContent(clickCounter: String) {
                 containerColor = Color.White,
                 contentColor = Color.Black
             ),
-            onClick = { /*TODO*/ }
+            onClick = { onButtonClicked() }
         ) {
-            Text(text = "BUTTON", fontWeight = FontWeight.Medium)
+            Text(text = "BUTTON")
         }
     }
 }
@@ -63,6 +80,6 @@ fun AppContent(clickCounter: String) {
 @Composable
 fun DefaultPreview() {
     MADCourseTheme {
-        MyApp()
+        CounterApp()
     }
 }
