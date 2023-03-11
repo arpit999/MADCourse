@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MADCourse</string>
+    <string name="users">Users</string>
+    <string name="user_id">UserId:</string>
+    <string name="full_name">fullName:</string>
+    <string name="email">email:</string>
+    <string name="username">username:</string>
 </resources>
