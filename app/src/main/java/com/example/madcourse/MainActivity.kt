@@ -3,18 +3,23 @@
 package com.example.madcourse
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,9 +57,17 @@ fun MyApp() {
         }
     ) { paddingValues ->
 
+        val users = remember {
+            mutableStateListOf(*users.toTypedArray())
+        }
+        val context = LocalContext.current
+
         LazyColumn(Modifier.padding(paddingValues)) {
             itemsIndexed(users) { index, user ->
-                UserItem(user = user, index = index)
+                UserItem(user = user, index = index){
+                    users.removeAt(index)
+                    Toast.makeText(context, "User Deleted: ${user.userId}", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -63,24 +76,34 @@ fun MyApp() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserItem(modifier: Modifier = Modifier, user: User, index: Int) {
+fun UserItem(modifier: Modifier = Modifier, user: User, index: Int, onItemClick: () -> Unit) {
 
     ElevatedCard(
         modifier = modifier
+            .clickable { onItemClick() }
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .fillMaxWidth()
     ) {
 
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
+                .padding(top = 8.dp), horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             Text(modifier = Modifier, text = stringResource(id = R.string.user_id) + " ${user.userId}")
             Text(modifier = Modifier, text = stringResource(id = R.string.username) + " ${user.username}")
         }
 
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Column(modifier = Modifier.padding(horizontal = 8.dp), horizontalAlignment = Alignment.Start) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
+                .padding(bottom = 8.dp), horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(horizontalAlignment = Alignment.Start) {
                 Text(text = stringResource(id = R.string.full_name) + " ${user.fullName}")
                 Text(text = stringResource(id = R.string.email) + " ${user.email}")
-                Text(text = stringResource(id = R.string.username) + " ${user.username}")
             }
 
             Box(
