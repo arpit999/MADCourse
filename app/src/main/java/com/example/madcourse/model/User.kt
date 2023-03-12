@@ -80,4 +80,4 @@ fun generateUsername2(charLimit: Int): String {
 }
 
 
-val users = userGenerator.take(100).toList()
+val users = userGenerator.take(100).toList().sortedBy { it.fullName }
