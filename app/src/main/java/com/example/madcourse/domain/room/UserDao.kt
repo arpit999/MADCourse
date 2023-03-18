@@ -1,10 +1,10 @@
-package com.example.madcourse.room
+package com.example.madcourse.domain.room
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import com.example.madcourse.model.User
+import com.example.madcourse.data.User
 import kotlinx.coroutines.flow.Flow
 
 @Dao

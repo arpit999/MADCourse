@@ -2,7 +2,7 @@ package com.example.madcourse.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.madcourse.room.UserDatabase
+import com.example.madcourse.domain.room.UserDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,7 +14,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object UserModule {
 
-    @Singleton // Tell Dagger-Hilt to create a singleton accessible everywhere in ApplicationCompenent (i.e. everywhere in the application)
+    @Singleton // Tell Dagger-Hilt to create a singleton accessible everywhere in ApplicationComponent (i.e. everywhere in the application)
     @Provides
     fun provideYourDatabase(
         @ApplicationContext appContext: Context
@@ -25,4 +25,22 @@ object UserModule {
     @Provides
     @Singleton
     fun provideYourDao(db: UserDatabase) = db.dao
+
+
+    /**
+     * TODO QUESTION: How do I access this method in UserDataStore?
+     */
+//    @Provides
+//    @Singleton
+//    fun providePreferencesDataStore(@ApplicationContext appContext: Context): DataStore<Preferences> {
+//        return PreferenceDataStoreFactory.create(
+//            corruptionHandler = ReplaceFileCorruptionHandler(
+//                produceNewData = { emptyPreferences() }
+//            ),
+//            migrations = listOf(SharedPreferencesMigration(appContext, USER_PREFERENCES)),
+//            scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
+//            produceFile = { appContext.preferencesDataStoreFile(USER_PREFERENCES) }
+//        )
+//    }
+
 }
