@@ -1,9 +1,14 @@
 package com.example.madcourse.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlin.random.Random
 import kotlin.random.Random.Default.nextInt
 
+@Entity(tableName = "user")
 data class User(
+    @PrimaryKey(autoGenerate = true)
+    val tableId: Int = 0,
     val userId: Long,
     val username: String,
     val fullName: String,
