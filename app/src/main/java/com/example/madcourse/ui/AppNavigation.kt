@@ -2,6 +2,7 @@ package com.example.madcourse.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,7 +13,7 @@ import com.example.madcourse.domain.UserViewModel
 fun MyAppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    viewModel: UserViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    viewModel: UserViewModel = viewModel(),
     startDestination: String = AppNavigation.SCREEN_B.name
 ) {
 

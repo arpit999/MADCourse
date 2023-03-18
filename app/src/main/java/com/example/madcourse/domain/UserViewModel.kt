@@ -6,18 +6,28 @@ import com.example.madcourse.data.UserDataStore
 import com.example.madcourse.data.users
 import com.example.madcourse.domain.room.UserDao
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class UserViewModel @Inject constructor(val dao: UserDao, private val dataStore: UserDataStore) : ViewModel() {
+class UserViewModel @Inject constructor(
+    val dao: UserDao,
+    private val dataStore: UserDataStore,
+) : ViewModel() {
 
-//    private var _isUserAdded = dataStore.isUserAdded
-    val isUserAdded get() = dataStore.isUserAdded
+    val isUserAdded: StateFlow<Boolean> = dataStore.isUserAdded.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = false
+    )
 
-    init {
-//        _isUserAdded = dataStore.isUserAdded.stateIn(viewModelScope, SharingStarted.Eagerly, false)
-    }
+//    val userList = mutableStateListOf<List<User>>(emptyList())
+    val userList = dao.getAllUser().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+//    var isUserAdded by mutableStateOf(false)
 
     fun upsertUsers() {
         viewModelScope.launch {
@@ -25,4 +35,5 @@ class UserViewModel @Inject constructor(val dao: UserDao, private val dataStore:
             dataStore.storeIsUserAdded(true)
         }
     }
+
 }

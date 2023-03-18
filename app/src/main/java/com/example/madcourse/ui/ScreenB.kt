@@ -1,6 +1,5 @@
 package com.example.madcourse.ui
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,10 +9,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,20 +19,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.madcourse.R
 import com.example.madcourse.data.User
-import com.example.madcourse.data.users
 import com.example.madcourse.domain.UserViewModel
 import com.example.madcourse.ui.theme.MADCourseTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScreenB(viewModel: UserViewModel = viewModel()) {
-
-    LaunchedEffect(key1 = Unit, block = {
-        Log.d("User List: ", viewModel.dao.getAllUser().toString())
-    })
+fun ScreenB(viewModel: UserViewModel) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -49,22 +40,22 @@ fun ScreenB(viewModel: UserViewModel = viewModel()) {
             }
         }
     ) { paddingValues ->
-        ScreenBContent(Modifier.padding(paddingValues))
+        ScreenBContent(Modifier.padding(paddingValues), viewModel.userList.collectAsStateWithLifecycle())
     }
 }
 
 @Composable
-fun ScreenBContent(modifier: Modifier = Modifier) {
+fun ScreenBContent(modifier: Modifier = Modifier, userListState: State<List<User>>) {
     val users = remember {
-        mutableStateListOf(*users.toTypedArray())
+//        mutableStateListOf(*users.toTypedArray())
+        userListState.value
     }
     val context = LocalContext.current
 
     LazyColumn(modifier = modifier) {
-        itemsIndexed(users) { index, user ->
+        itemsIndexed(userListState.value) { index, user ->
             UserItem(user = user, index = index) {
-                users.removeAt(index)
-                Toast.makeText(context, "User Deleted: ${user.userId}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "User Selected: ${user.userId}", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -131,7 +122,13 @@ fun UserItem(modifier: Modifier = Modifier, user: User, index: Int, onItemClick:
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
+    val userList = listOf(
+        User(112, 1234, "Arpit003", " Arpit Patel", "arpit@gmail.com"),
+        User(112, 1234, "Arpit003", " Arpit Patel", "arpit@gmail.com"),
+        User(112, 1234, "Arpit003", " Arpit Patel", "arpit@gmail.com"),
+        User(112, 1234, "Arpit003", " Arpit Patel", "arpit@gmail.com")
+    )
     MADCourseTheme {
-        ScreenBContent()
+//        ScreenBContent(userListState = mutableStateListOf<User>(userList) )
     }
 }

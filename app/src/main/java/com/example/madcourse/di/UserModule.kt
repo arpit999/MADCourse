@@ -2,6 +2,7 @@ package com.example.madcourse.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.madcourse.data.UserDataStore
 import com.example.madcourse.domain.room.UserDatabase
 import dagger.Module
 import dagger.Provides
@@ -26,6 +27,10 @@ object UserModule {
     @Singleton
     fun provideYourDao(db: UserDatabase) = db.dao
 
+    @Provides
+    fun provideDataStoreManager(@ApplicationContext context: Context): UserDataStore {
+        return UserDataStore(context)
+    }
 
     /**
      * TODO QUESTION: How do I access this method in UserDataStore?
