@@ -13,7 +13,7 @@ class UserViewModel @Inject constructor(val dao: UserDao) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            dao.upsertUser(users.subList(1,5))
+            dao.upsertUser(users.asSequence().shuffled().take(5).toList())
         }
     }
 
