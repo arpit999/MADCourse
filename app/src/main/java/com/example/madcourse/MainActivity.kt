@@ -64,7 +64,7 @@ fun MyApp() {
 
         LazyColumn(Modifier.padding(paddingValues)) {
             itemsIndexed(users) { index, user ->
-                UserItem(user = user, index = index){
+                UserItem(user = user, index = index) {
                     users.removeAt(index)
                     Toast.makeText(context, "User Deleted: ${user.userId}", Toast.LENGTH_SHORT).show()
                 }
