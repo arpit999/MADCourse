@@ -26,10 +26,15 @@ import com.example.madcourse.R
 import com.example.madcourse.data.User
 import com.example.madcourse.domain.UserViewModel
 import com.example.madcourse.ui.theme.MADCourseTheme
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScreenB(viewModel: UserViewModel, navController: NavHostController) {
+
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    val scope = rememberCoroutineScope()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -40,17 +45,27 @@ fun ScreenB(viewModel: UserViewModel, navController: NavHostController) {
                     colors = topAppBarColors()
                 )
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(snackBarHostState, modifier = Modifier.padding(bottom = 24.dp)) }
     ) { paddingValues ->
+
+        val userList = viewModel.userList.collectAsStateWithLifecycle()
         ScreenBContent(
             Modifier.padding(paddingValues),
-            viewModel.userList.collectAsStateWithLifecycle(),
+            userList,
             addUserClick = {
                 viewModel.addUser()
+                scope.launch {
+                    snackBarHostState.showSnackbar(
+                        "User ${userList.value.size + 1} added",
+                        duration = SnackbarDuration.Short
+                    )
+                }
             },
             onItemSelect = {
                 navController.navigate(it)
             })
+
     }
 }
 
@@ -102,7 +117,6 @@ fun ScreenBContent(
                     style = MaterialTheme.typography.titleLarge
                 )
             }
-
 
         }
     }
