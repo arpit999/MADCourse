@@ -1,6 +1,5 @@
 package com.example.madcourse.ui
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -88,7 +87,7 @@ fun ScreenBContent(
                         // Pass only the user ID when navigating to a new destination as argument
                         onItemSelect(AppNavigation.SCREEN_C.name + "/${user.tableId}")
 
-                        Toast.makeText(context, "User Selected: ${user.userId}", Toast.LENGTH_SHORT).show()
+//                        Toast.makeText(context, "User Selected: ${user.userId}", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

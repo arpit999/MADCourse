@@ -42,7 +42,7 @@ fun MyAppNavHost(
             if (user != null) {
                 viewModel.getUser(user)
             }
-            ScreenC(viewModel.userDetails.collectAsState(users.first()))
+            ScreenC(navController,viewModel.userDetails.collectAsState(users.first()))
         }
 
     }
