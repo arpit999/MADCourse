@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import com.example.madcourse.R
 import com.example.madcourse.data.User
 import com.example.madcourse.domain.UserViewModel
@@ -29,35 +30,42 @@ import com.example.madcourse.ui.theme.MADCourseTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScreenB(viewModel: UserViewModel) {
+fun ScreenB(viewModel: UserViewModel, navController: NavHostController) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             Surface(shadowElevation = 3.dp) {
                 TopAppBar(
-                    title = { Text(text = stringResource(id = R.string.users)) },
+                    title = { Text(text = stringResource(id = R.string.user_directory)) },
                     colors = topAppBarColors()
                 )
             }
         }
     ) { paddingValues ->
-        ScreenBContent(Modifier.padding(paddingValues), viewModel.userList.collectAsStateWithLifecycle()) {
-            viewModel.addUser()
-        }
+        ScreenBContent(
+            Modifier.padding(paddingValues),
+            viewModel.userList.collectAsStateWithLifecycle(),
+            addUserClick = {
+                viewModel.addUser()
+            },
+            onItemSelect = {
+                navController.navigate(it)
+            })
     }
 }
 
 @Composable
-fun ScreenBContent(modifier: Modifier = Modifier, userListState: State<List<User>>, addUserClick: () -> Unit) {
-    val users = remember {
-//        mutableStateListOf(*users.toTypedArray())
-        userListState.value
-    }
+fun ScreenBContent(
+    modifier: Modifier = Modifier,
+    userListState: State<List<User>>,
+    addUserClick: () -> Unit,
+    onItemSelect: (String) -> Unit
+) {
+
     val context = LocalContext.current
 
-
-    Column(modifier = modifier) {
+    Column(modifier = modifier.fillMaxSize()) {
 
         Text(
             modifier = Modifier
@@ -77,12 +85,13 @@ fun ScreenBContent(modifier: Modifier = Modifier, userListState: State<List<User
             ) {
                 itemsIndexed(userListState.value) { index, user ->
                     UserItem(user = user, index = index) {
+                        // Pass only the user ID when navigating to a new destination as argument
+                        onItemSelect(AppNavigation.SCREEN_C.name + "/${user.tableId}")
 
                         Toast.makeText(context, "User Selected: ${user.userId}", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
-
 
             ElevatedButton(modifier = Modifier
                 .fillMaxWidth()
@@ -90,7 +99,7 @@ fun ScreenBContent(modifier: Modifier = Modifier, userListState: State<List<User
                 shape = RoundedCornerShape(16.dp),
                 onClick = { addUserClick() }) {
                 Text(
-                    text = "Add User",
+                    text = "CLick here to add user",
                     style = MaterialTheme.typography.titleLarge
                 )
             }
@@ -170,6 +179,6 @@ fun DefaultPreview() {
         User(112, 1234, "Arpit003", " Arpit Patel", "arpit@gmail.com")
     )
     MADCourseTheme {
-//        ScreenBContent(userListState = mutableStateListOf<User>(userList) )
+//        ScreenBContent(userListState = State<User>(userList) )
     }
 }

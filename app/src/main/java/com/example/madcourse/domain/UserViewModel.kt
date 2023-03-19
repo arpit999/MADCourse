@@ -2,10 +2,12 @@ package com.example.madcourse.domain
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.madcourse.data.User
 import com.example.madcourse.data.UserDataStore
 import com.example.madcourse.data.users
 import com.example.madcourse.domain.room.UserDao
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -24,10 +26,9 @@ class UserViewModel @Inject constructor(
         initialValue = false
     )
 
-    //    val userList = mutableStateListOf<List<User>>(emptyList())
     val userList = dao.getAllUser().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-//    var isUserAdded by mutableStateOf(false)
+    var userDetails: Flow<User> = dao.getUser(1)
 
     fun upsertUsers() {
         viewModelScope.launch {
@@ -39,6 +40,12 @@ class UserViewModel @Inject constructor(
     fun addUser() {
         viewModelScope.launch {
             dao.upsertUser(users.asSequence().shuffled().take(1).toList())
+        }
+    }
+
+    fun getUser(tableId: Int) {
+        viewModelScope.launch {
+          userDetails =  dao.getUser(tableId)
         }
     }
 
