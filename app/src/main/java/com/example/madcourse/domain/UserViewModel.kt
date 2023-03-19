@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    val dao: UserDao,
+    private val dao: UserDao,
     private val dataStore: UserDataStore,
 ) : ViewModel() {
 
@@ -24,7 +24,7 @@ class UserViewModel @Inject constructor(
         initialValue = false
     )
 
-//    val userList = mutableStateListOf<List<User>>(emptyList())
+    //    val userList = mutableStateListOf<List<User>>(emptyList())
     val userList = dao.getAllUser().stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
 //    var isUserAdded by mutableStateOf(false)
@@ -33,6 +33,12 @@ class UserViewModel @Inject constructor(
         viewModelScope.launch {
             dao.upsertUser(users.asSequence().shuffled().take(5).toList())
             dataStore.storeIsUserAdded(true)
+        }
+    }
+
+    fun addUser() {
+        viewModelScope.launch {
+            dao.upsertUser(users.asSequence().shuffled().take(1).toList())
         }
     }
 

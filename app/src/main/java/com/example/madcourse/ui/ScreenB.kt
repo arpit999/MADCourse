@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.*
@@ -16,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,25 +42,64 @@ fun ScreenB(viewModel: UserViewModel) {
             }
         }
     ) { paddingValues ->
-        ScreenBContent(Modifier.padding(paddingValues), viewModel.userList.collectAsStateWithLifecycle())
+        ScreenBContent(Modifier.padding(paddingValues), viewModel.userList.collectAsStateWithLifecycle()) {
+            viewModel.addUser()
+        }
     }
 }
 
 @Composable
-fun ScreenBContent(modifier: Modifier = Modifier, userListState: State<List<User>>) {
+fun ScreenBContent(modifier: Modifier = Modifier, userListState: State<List<User>>, addUserClick: () -> Unit) {
     val users = remember {
 //        mutableStateListOf(*users.toTypedArray())
         userListState.value
     }
     val context = LocalContext.current
 
-    LazyColumn(modifier = modifier) {
-        itemsIndexed(userListState.value) { index, user ->
-            UserItem(user = user, index = index) {
-                Toast.makeText(context, "User Selected: ${user.userId}", Toast.LENGTH_SHORT).show()
+
+    Column(modifier = modifier) {
+
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            textAlign = TextAlign.Center,
+            text = "Welcome to user list screen",
+            style = MaterialTheme.typography.titleLarge
+        )
+
+        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween) {
+
+            LazyColumn(
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .weight(1f)
+            ) {
+                itemsIndexed(userListState.value) { index, user ->
+                    UserItem(user = user, index = index) {
+
+                        Toast.makeText(context, "User Selected: ${user.userId}", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
+
+
+            ElevatedButton(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+                shape = RoundedCornerShape(16.dp),
+                onClick = { addUserClick() }) {
+                Text(
+                    text = "Add User",
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+
+
         }
     }
+
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
