@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import com.example.madcourse.data.User
+import com.example.madcourse.domain.network.model.User
 import kotlinx.coroutines.flow.Flow
 
 @Dao

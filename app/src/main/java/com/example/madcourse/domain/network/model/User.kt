@@ -1,4 +1,4 @@
-package com.example.madcourse.data
+package com.example.madcourse.domain.network.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

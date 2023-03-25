@@ -1,10 +1,10 @@
-package com.example.madcourse.data
+package com.example.madcourse.domain.network.model
 
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.madcourse.data.KEYS.USER_ADDED
+import com.example.madcourse.domain.network.model.KEYS.USER_ADDED
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

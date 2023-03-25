@@ -2,9 +2,9 @@ package com.example.madcourse.domain
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.madcourse.data.User
-import com.example.madcourse.data.UserDataStore
-import com.example.madcourse.data.users
+import com.example.madcourse.domain.network.model.User
+import com.example.madcourse.domain.network.model.UserDataStore
+import com.example.madcourse.domain.network.model.users
 import com.example.madcourse.domain.room.UserDao
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow

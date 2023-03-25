@@ -12,7 +12,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.madcourse.R
-import com.example.madcourse.data.User
+import com.example.madcourse.domain.network.model.User
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

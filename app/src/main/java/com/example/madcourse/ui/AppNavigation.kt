@@ -10,8 +10,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.madcourse.data.users
 import com.example.madcourse.domain.UserViewModel
+import com.example.madcourse.domain.network.model.users
 
 @Composable
 fun MyAppNavHost(
@@ -48,11 +48,6 @@ fun MyAppNavHost(
     }
 }
 
-//fun withArgs(vararg args: String):String{
-//    return buildString {
-//        append(route)
-//    }
-//}
 
 enum class AppNavigation {
     SCREEN_A,

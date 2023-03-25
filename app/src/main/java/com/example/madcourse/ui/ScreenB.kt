@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.madcourse.R
-import com.example.madcourse.data.User
 import com.example.madcourse.domain.UserViewModel
+import com.example.madcourse.domain.network.model.User
 import com.example.madcourse.ui.theme.MADCourseTheme
 import kotlinx.coroutines.launch
 
