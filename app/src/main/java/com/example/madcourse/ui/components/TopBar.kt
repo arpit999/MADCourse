@@ -1,6 +1,7 @@
 package com.example.madcourse.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
@@ -28,7 +29,9 @@ fun TopBar(title: String = stringResource(id = R.string.app_name), icon: ImageVe
 @Composable
 fun BackIcon(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
     Icon(
-        modifier = modifier.clickable { onBackClick() },
+        modifier = modifier
+            .clickable { onBackClick() }
+            .padding(12.dp),
         imageVector = Icons.Filled.ArrowBack,
         contentDescription = "Back"
     )

@@ -3,7 +3,6 @@ package com.example.madcourse.ui
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -17,6 +16,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import coil.compose.AsyncImage
 import com.example.madcourse.domain.UserViewModel
 import com.example.madcourse.domain.network.model.User
@@ -27,7 +29,9 @@ import com.example.madcourse.ui.components.SearchIcon
 @Composable
 fun ScreenA(viewModel: UserViewModel, navController: NavHostController) {
 
-    val userList = viewModel.userList.collectAsStateWithLifecycle()
+//    val userList = viewModel.userList.collectAsStateWithLifecycle()
+
+    val users = remember { viewModel.getGitHubUsers() }.collectAsLazyPagingItems()
 
     Scaffold(topBar = {
         Surface(shadowElevation = 3.dp) {
@@ -36,9 +40,12 @@ fun ScreenA(viewModel: UserViewModel, navController: NavHostController) {
     }) { paddingValues ->
 
         ScreenAContent(Modifier.padding(paddingValues),
-            userList = userList,
-            onSearchClick = { searchQuery ->
-                viewModel.getUsers()
+//            userList = userList,
+            viewModel = viewModel,
+            users = users,
+            onSearchClick = {
+//                viewModel.getUsers(viewModel.getPageNumber())
+                viewModel.getGitHubUsers()
             },
             onTextChanged = {
                 viewModel.onSearchTextChanged(it)
@@ -54,16 +61,14 @@ fun ScreenA(viewModel: UserViewModel, navController: NavHostController) {
 @Composable
 fun ScreenAContent(
     modifier: Modifier = Modifier,
-    userList: State<List<User>>,
-    onSearchClick: (String) -> Unit,
+//    userList: State<List<User>>,
+    onSearchClick: () -> Unit,
     onTextChanged: (String) -> Unit,
-    onUserClick: (User) -> Unit
+    onUserClick: (User) -> Unit,
+    users: LazyPagingItems<User>,
+    viewModel: UserViewModel
 ) {
-
-    var searchQuery by remember {
-        mutableStateOf("")
-    }
-
+    val searchText by viewModel.searchText.collectAsStateWithLifecycle()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -75,18 +80,15 @@ fun ScreenAContent(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            value = searchQuery,
-            onValueChange = { newValue ->
-                onTextChanged(newValue)
-                searchQuery = newValue
-            },
+            value = searchText,
+            onValueChange = viewModel::onSearchTextChanged,
 //            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
             placeholder = { Text(text = "Search Here ...", color = Color.Gray) },
             leadingIcon = { SearchIcon() },
             trailingIcon = {
-                if (searchQuery.isNotEmpty()) {
+                if (searchText.isNotEmpty()) {
                     ClearIcon {
-                        searchQuery = ""
+                        viewModel.onSearchTextChanged("")
                     }
                 }
             },
@@ -94,7 +96,7 @@ fun ScreenAContent(
 
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
 
-        ElevatedButton(shape = RoundedCornerShape(16.dp), onClick = { onSearchClick(searchQuery) }) {
+        ElevatedButton(shape = RoundedCornerShape(16.dp), onClick = { onSearchClick() }) {
             Text(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                 text = "Search",
@@ -102,25 +104,75 @@ fun ScreenAContent(
             )
         }
 
-        LazyColumn() {
-            item {
-                Text(
-                    modifier = Modifier.align(Alignment.Start),
-                    text = "Users",
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-            items(userList.value) { user ->
-                UserCard(user) {
-                    onUserClick(user)
+        LazyColumn(
+            modifier = Modifier,
+            contentPadding = PaddingValues(4.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+//            item {
+//                Text(
+//                    modifier = Modifier.align(Alignment.Start),
+//                    text = "Users",
+//                    style = MaterialTheme.typography.bodyMedium
+//                )
+//            }
+//            items(userList.value) { user ->
+//                UserCard(user) {
+//                    onUserClick(user)
+//                }
+//            }
+
+            items(users) { user ->
+                user?.let {
+                    UserCard(it) {
+                        onUserClick(it)
+                    }
                 }
             }
+
+//            when (userList.loadState.append) {
+//                LoadState.Loading -> item { LoadingItem() }
+//                is LoadState.Error -> item {
+//                    Popup() {
+//                        Text(text = "Item not found")
+//                    }
+//                }
+//                is LoadState.NotLoading -> Unit
+//            }
+
+//            when(userList.loadState.refresh){
+//                LoadState.Loading -> item { Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){ CircularProgressIndicator()} }
+//                is LoadState.Error ->item { Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){ Text(
+//                    text = "Item not found"
+//                )} }
+//                is LoadState.NotLoading -> Unit
+//            }
+
+
         }
 
     }
 
 }
 
+@Composable
+fun LoadingItem() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier
+                .width(42.dp)
+                .height(42.dp)
+                .padding(8.dp),
+            strokeWidth = 5.dp
+        )
+
+    }
+}
 
 @Composable
 fun UserCard(user: User, onUserClick: () -> Unit) {
