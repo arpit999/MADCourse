@@ -9,7 +9,6 @@ import com.example.madcourse.domain.network.repository.GithubRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,8 +21,11 @@ class UserViewModel @Inject constructor(
     private val _userList = MutableStateFlow(emptyList<User>())
     val userList: StateFlow<List<User>> = _userList
 
+    private val _userDetails: MutableStateFlow<UserDetails?> = MutableStateFlow(null)
+    val userDetails: StateFlow<UserDetails?> = _userDetails
+
     //    var userList: StateFlow<List<User>> = MutableStateFlow(emptyList())
-    var userDetails: StateFlow<UserDetails?> = MutableStateFlow(null)
+//    var userDetails: StateFlow<UserDetails?> = MutableStateFlow(null)
 
     fun getUsers(user: String, page: Int) {
         viewModelScope.launch {
@@ -34,7 +36,7 @@ class UserViewModel @Inject constructor(
 
     fun getUserDetails(username: String) {
         viewModelScope.launch {
-            userDetails = repo.getUserDetails(username).stateIn(viewModelScope)
+            _userDetails.value = repo.getUserDetails(username)
         }
     }
 

@@ -21,7 +21,7 @@ fun ScreenC(navController: NavHostController) {
         topBar = {
             Surface(shadowElevation = 3.dp) {
                 TopAppBar(
-                    title = { Text(text = stringResource(id = R.string.user_directory)) },
+                    title = { Text(text = stringResource(id = R.string.user_details)) },
                     navigationIcon = {
                         IconButton(onClick = {
                             navController.popBackStack()

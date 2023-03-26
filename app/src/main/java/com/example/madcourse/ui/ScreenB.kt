@@ -1,28 +1,26 @@
 package com.example.madcourse.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.madcourse.R
 import com.example.madcourse.domain.UserViewModel
 import com.example.madcourse.domain.network.model.UserDetails
+import com.example.madcourse.ui.components.BackIcon
 import com.example.madcourse.ui.theme.MADCourseTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,13 +34,18 @@ fun ScreenB(viewModel: UserViewModel, navController: NavHostController) {
         topBar = {
             Surface(shadowElevation = 3.dp) {
                 TopAppBar(
-                    title = { Text(text = stringResource(id = R.string.user_directory)) },
-                    colors = topAppBarColors()
+                    title = { Text(text = stringResource(id = R.string.user_details)) },
+                    navigationIcon = {
+                        BackIcon {
+                            navController.popBackStack()
+                        }
+                    }
                 )
             }
         },
     ) { paddingValues ->
 
+        Log.d("TAG", "ScreenB: $userDetails")
         ScreenBContent(
             Modifier.padding(paddingValues),
             userDetails
@@ -54,7 +57,7 @@ fun ScreenB(viewModel: UserViewModel, navController: NavHostController) {
 @Composable
 fun ScreenBContent(
     modifier: Modifier = Modifier,
-    userListState: State<UserDetails?>,
+    userDetails: State<UserDetails?>,
 ) {
 
     val context = LocalContext.current
@@ -66,12 +69,13 @@ fun ScreenBContent(
                 .fillMaxWidth()
                 .padding(12.dp),
             textAlign = TextAlign.Center,
-            text = "Welcome to user list screen",
+            text = "Welcome to user detail screen",
             style = MaterialTheme.typography.titleLarge
         )
 
-        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween) {
+        Text(text = ("Full Name:" + userDetails.value?.fullName), style = MaterialTheme.typography.titleLarge)
 
+        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween) {
 
             ElevatedButton(modifier = Modifier
                 .fillMaxWidth()
@@ -92,11 +96,10 @@ fun ScreenBContent(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserItem(modifier: Modifier = Modifier, index: Int, onItemClick: () -> Unit) {
+fun UserItem(modifier: Modifier = Modifier, userDetails: State<UserDetails>) {
 
     ElevatedCard(
         modifier = modifier
-            .clickable { onItemClick() }
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .fillMaxWidth()
     ) {
@@ -132,13 +135,13 @@ fun UserItem(modifier: Modifier = Modifier, index: Int, onItemClick: () -> Unit)
                     contentColor = Color.Black,
                     containerColor = Color.White
                 ) {
-                    Text(
-                        modifier = Modifier
-                            .padding(4.dp),
-                        text = "${index + 1}",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp
-                    )
+//                    Text(
+//                        modifier = Modifier
+//                            .padding(4.dp),
+////                        text = "${index + 1}",
+//                        fontWeight = FontWeight.Bold,
+//                        fontSize = 14.sp
+//                    )
                 }
             }
 

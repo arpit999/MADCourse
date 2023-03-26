@@ -1,5 +1,6 @@
 package com.example.madcourse.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,6 +16,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.madcourse.domain.UserViewModel
 import com.example.madcourse.domain.network.model.User
@@ -23,7 +25,7 @@ import com.example.madcourse.ui.components.SearchIcon
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScreenA(viewModel: UserViewModel) {
+fun ScreenA(viewModel: UserViewModel, navController: NavHostController) {
 
     val userList = viewModel.userList.collectAsStateWithLifecycle()
 
@@ -33,9 +35,16 @@ fun ScreenA(viewModel: UserViewModel) {
         }
     }) { paddingValues ->
 
-        ScreenAContent(Modifier.padding(paddingValues), userList = userList) { searchQuery ->
-            viewModel.getUsers(searchQuery, 1)
-        }
+        ScreenAContent(Modifier.padding(paddingValues),
+            userList = userList,
+            onSearchClick = { searchQuery ->
+                viewModel.getUsers(searchQuery, 1)
+            },
+            onUserClick = {
+                viewModel.getUserDetails(it.username)
+                navController.navigate("${AppNavigation.SCREEN_B.name}/${it.username}")
+            }
+        )
     }
 }
 
@@ -43,7 +52,8 @@ fun ScreenA(viewModel: UserViewModel) {
 fun ScreenAContent(
     modifier: Modifier = Modifier,
     userList: State<List<User>>,
-    onSearchClick: (String) -> Unit
+    onSearchClick: (String) -> Unit,
+    onUserClick: (User) -> Unit
 ) {
 
     var searchQuery by remember {
@@ -96,7 +106,9 @@ fun ScreenAContent(
                 )
             }
             items(userList.value) { user ->
-                UserCard(user)
+                UserCard(user) {
+                    onUserClick(user)
+                }
             }
         }
 
@@ -106,7 +118,7 @@ fun ScreenAContent(
 
 
 @Composable
-fun UserCard(user: User) {
+fun UserCard(user: User, onUserClick: () -> Unit) {
 
     Spacer(modifier = Modifier.padding(vertical = 8.dp))
 
@@ -117,7 +129,7 @@ fun UserCard(user: User) {
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
 
         ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(modifier = Modifier.clickable { onUserClick() }, verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
                 modifier = Modifier
                     .size(80.dp)

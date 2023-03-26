@@ -26,18 +26,18 @@ fun MyAppNavHost(
         startDestination = startDestination
     ) {
         composable(AppNavigation.SCREEN_A.name) {
-            ScreenA(viewModel)
+            ScreenA(viewModel, navController)
 //            ScreenB(viewModel, navController)
         }
         composable(AppNavigation.SCREEN_B.name + "/{username}", arguments = listOf(
-            navArgument("tableId") {
-                type = NavType.IntType
-                defaultValue = 1
+            navArgument("username") {
+                type = NavType.StringType
+                defaultValue = ""
             }
         )) { entry ->
-            val username = entry.arguments?.getInt("username")
+            val username = entry.arguments?.getString("username")
 
-            ScreenC(navController)
+            ScreenB(viewModel, navController)
         }
 
     }
