@@ -3,11 +3,13 @@ package com.example.madcourse.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
@@ -90,8 +92,6 @@ fun ScreenAContent(modifier: Modifier = Modifier, userList: State<List<User>>, o
                 )
             }
             items(userList.value) { user ->
-
-
                 UserCard(user)
             }
         }
@@ -105,20 +105,31 @@ fun ScreenAContent(modifier: Modifier = Modifier, userList: State<List<User>>, o
 fun UserCard(user: User) {
 
     Spacer(modifier = Modifier.padding(vertical = 8.dp))
-    Column(Modifier.fillMaxWidth()) {
-        Row() {
+
+    ElevatedCard(
+        Modifier
+            .fillMaxWidth()
+            .heightIn(max = 120.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
+
+        ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
-//                modifier = Modifier.clip(CircleShape),
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(CircleShape),
                 model = user.profilePicture,
                 contentDescription = null
             )
-
-            Column {
+            Spacer(modifier = Modifier.padding(horizontal = 16.dp))
+            Column() {
                 Text(text = user.username, style = MaterialTheme.typography.titleLarge)
                 Text(text = AnnotatedString(user.profileURL), style = MaterialTheme.typography.bodySmall)
             }
         }
     }
+
+    Spacer(modifier = Modifier.padding(bottom = 12.dp))
 
 }
 
