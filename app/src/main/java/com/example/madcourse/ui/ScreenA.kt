@@ -38,7 +38,10 @@ fun ScreenA(viewModel: UserViewModel, navController: NavHostController) {
         ScreenAContent(Modifier.padding(paddingValues),
             userList = userList,
             onSearchClick = { searchQuery ->
-                viewModel.getUsers(searchQuery, 1)
+                viewModel.getUsers()
+            },
+            onTextChanged = {
+                viewModel.onSearchTextChanged(it)
             },
             onUserClick = {
                 viewModel.getUserDetails(it.username)
@@ -53,6 +56,7 @@ fun ScreenAContent(
     modifier: Modifier = Modifier,
     userList: State<List<User>>,
     onSearchClick: (String) -> Unit,
+    onTextChanged: (String) -> Unit,
     onUserClick: (User) -> Unit
 ) {
 
@@ -73,6 +77,7 @@ fun ScreenAContent(
                 .padding(horizontal = 16.dp),
             value = searchQuery,
             onValueChange = { newValue ->
+                onTextChanged(newValue)
                 searchQuery = newValue
             },
 //            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),

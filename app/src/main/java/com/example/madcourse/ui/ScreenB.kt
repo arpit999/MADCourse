@@ -36,7 +36,7 @@ fun ScreenB(viewModel: UserViewModel, navController: NavHostController) {
                 TopAppBar(
                     title = { Text(text = stringResource(id = R.string.user_details)) },
                     navigationIcon = {
-                        BackIcon {
+                        BackIcon(Modifier.padding(8.dp)) {
                             navController.popBackStack()
                         }
                     }

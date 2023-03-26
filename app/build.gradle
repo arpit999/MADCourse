@@ -95,6 +95,10 @@ dependencies {
     //Image loading support
     implementation("io.coil-kt:coil-compose:2.2.2")
 
+    // Paging support to load data in chunks
+    implementation "androidx.paging:paging-runtime:3.1.1"
+    implementation "androidx.paging:paging-compose:1.0.0-alpha18"
+
     // DataStore
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 

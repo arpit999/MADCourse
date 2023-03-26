@@ -17,6 +17,11 @@ class UserViewModel @Inject constructor(
     private val repo: GithubRepo,
 ) : ViewModel() {
 
+    var pageNumber = MutableStateFlow(0)
+//    private val pageNumber: StateFlow<Int> = _pageNumber
+
+    private var _searchText = MutableStateFlow("")
+    private val searchText: StateFlow<String> = _searchText
 
     private val _userList = MutableStateFlow(emptyList<User>())
     val userList: StateFlow<List<User>> = _userList
@@ -24,12 +29,16 @@ class UserViewModel @Inject constructor(
     private val _userDetails: MutableStateFlow<UserDetails?> = MutableStateFlow(null)
     val userDetails: StateFlow<UserDetails?> = _userDetails
 
+    fun onSearchTextChanged(text: String) {
+        _searchText.value = text
+    }
     //    var userList: StateFlow<List<User>> = MutableStateFlow(emptyList())
 //    var userDetails: StateFlow<UserDetails?> = MutableStateFlow(null)
 
-    fun getUsers(user: String, page: Int) {
+    fun getUsers() {
+        pageNumber.value += 1
         viewModelScope.launch {
-            _userList.value = repo.getUsers(user, page)
+            _userList.value = repo.getUsers(searchText.value, pageNumber.value)
             Log.d("TAG", "getUsers:  ${userList.value}")
         }
     }

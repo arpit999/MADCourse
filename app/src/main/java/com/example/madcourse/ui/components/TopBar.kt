@@ -26,9 +26,9 @@ fun TopBar(title: String = stringResource(id = R.string.app_name), icon: ImageVe
 }
 
 @Composable
-fun BackIcon(onBackClick: () -> Unit) {
+fun BackIcon(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
     Icon(
-        modifier = Modifier.clickable { onBackClick() },
+        modifier = modifier.clickable { onBackClick() },
         imageVector = Icons.Filled.ArrowBack,
         contentDescription = "Back"
     )
