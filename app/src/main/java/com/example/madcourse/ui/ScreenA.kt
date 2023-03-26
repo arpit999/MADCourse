@@ -33,16 +33,20 @@ fun ScreenA(viewModel: UserViewModel) {
         }
     }) { paddingValues ->
 
-        ScreenAContent(Modifier.padding(paddingValues), userList = userList) {
-            viewModel.getUsers("arpit", 1)
+        ScreenAContent(Modifier.padding(paddingValues), userList = userList) { searchQuery ->
+            viewModel.getUsers(searchQuery, 1)
         }
     }
 }
 
 @Composable
-fun ScreenAContent(modifier: Modifier = Modifier, userList: State<List<User>>, onUserClick: () -> Unit) {
+fun ScreenAContent(
+    modifier: Modifier = Modifier,
+    userList: State<List<User>>,
+    onSearchClick: (String) -> Unit
+) {
 
-    var searchQuary by remember {
+    var searchQuery by remember {
         mutableStateOf("")
     }
 
@@ -57,17 +61,17 @@ fun ScreenAContent(modifier: Modifier = Modifier, userList: State<List<User>>, o
             modifier = modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            value = searchQuary,
+            value = searchQuery,
             onValueChange = { newValue ->
-                searchQuary = newValue
+                searchQuery = newValue
             },
 //            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
             placeholder = { Text(text = "Search Here ...", color = Color.Gray) },
             leadingIcon = { SearchIcon() },
             trailingIcon = {
-                if (searchQuary.isNotEmpty()) {
+                if (searchQuery.isNotEmpty()) {
                     ClearIcon {
-                        searchQuary = ""
+                        searchQuery = ""
                     }
                 }
             },
@@ -75,10 +79,10 @@ fun ScreenAContent(modifier: Modifier = Modifier, userList: State<List<User>>, o
 
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
 
-        ElevatedButton(shape = RoundedCornerShape(16.dp), onClick = { onUserClick() }) {
+        ElevatedButton(shape = RoundedCornerShape(16.dp), onClick = { onSearchClick(searchQuery) }) {
             Text(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-                text = "Add All Users",
+                text = "Search",
                 style = MaterialTheme.typography.titleLarge
             )
         }
