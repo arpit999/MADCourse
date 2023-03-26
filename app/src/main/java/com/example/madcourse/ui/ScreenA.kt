@@ -14,8 +14,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
@@ -130,15 +132,15 @@ fun ScreenAContent(
                 }
             }
 
-//            when (userList.loadState.append) {
-//                LoadState.Loading -> item { LoadingItem() }
-//                is LoadState.Error -> item {
-//                    Popup() {
-//                        Text(text = "Item not found")
-//                    }
-//                }
-//                is LoadState.NotLoading -> Unit
-//            }
+            when (users.loadState.append) {
+                LoadState.Loading -> item { LoadingItem() }
+                is LoadState.Error -> item {
+                    Popup() {
+                        Text(text = "Item not found")
+                    }
+                }
+                is LoadState.NotLoading -> Unit
+            }
 
 //            when(userList.loadState.refresh){
 //                LoadState.Loading -> item { Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){ CircularProgressIndicator()} }

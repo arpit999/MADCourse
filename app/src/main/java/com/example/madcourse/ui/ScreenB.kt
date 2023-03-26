@@ -1,22 +1,21 @@
 package com.example.madcourse.ui
 
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.example.madcourse.R
 import com.example.madcourse.domain.UserViewModel
 import com.example.madcourse.domain.network.model.UserDetails
@@ -60,10 +59,7 @@ fun ScreenBContent(
     userDetails: State<UserDetails?>,
 ) {
 
-    val context = LocalContext.current
-
     Column(modifier = modifier.fillMaxSize()) {
-
         Text(
             modifier = Modifier
                 .fillMaxWidth()
@@ -72,84 +68,75 @@ fun ScreenBContent(
             text = "Welcome to user detail screen",
             style = MaterialTheme.typography.titleLarge
         )
+        userDetails.value?.let { it -> UserDetailCard(it) }
+    }
+}
 
-        Text(text = ("Full Name:" + userDetails.value?.fullName), style = MaterialTheme.typography.titleLarge)
+@Composable
+fun UserDetailCard(user: UserDetails) {
+    ElevatedCard(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
 
-        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween) {
+        ) {
 
-            ElevatedButton(modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-                shape = RoundedCornerShape(16.dp),
-                onClick = { }) {
-                Text(
-                    text = "CLick here to add user",
-                    style = MaterialTheme.typography.titleLarge
+        Column(
+            Modifier.padding(vertical = 16.dp, horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
+                AsyncImage(
+                    modifier = Modifier
+                        .size(130.dp)
+                        .clip(CircleShape),
+                    model = user.profilePic,
+                    contentDescription = null
                 )
             }
 
-        }
-    }
+            Spacer(modifier = Modifier.padding(horizontal = 16.dp))
 
+            Text(text = user.fullName, style = MaterialTheme.typography.titleLarge)
+            Text(text = user.userName, style = MaterialTheme.typography.bodyLarge)
 
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun UserItem(modifier: Modifier = Modifier, userDetails: State<UserDetails>) {
-
-    ElevatedCard(
-        modifier = modifier
-            .padding(horizontal = 12.dp, vertical = 8.dp)
-            .fillMaxWidth()
-    ) {
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp)
-                .padding(top = 8.dp), horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-//            Text(modifier = Modifier, text = stringResource(id = R.string.user_id) + " ${user.userId}")
-//            Text(modifier = Modifier, text = stringResource(id = R.string.username) + " ${user.username}")
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp)
-                .padding(bottom = 8.dp), horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(horizontalAlignment = Alignment.Start) {
-//                Text(text = stringResource(id = R.string.full_name) + " ${user.fullName}")
-//                Text(text = stringResource(id = R.string.email) + " ${user.email}")
-            }
-
-            Box(
+            Row(
                 modifier = Modifier
-                    .padding(top = 4.dp)
-                    .background(color = Color.Black, shape = CircleShape)
-                    .padding(3.dp)
+                    .fillMaxWidth()
+                    .height(80.dp)
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Badge(
-                    contentColor = Color.Black,
-                    containerColor = Color.White
-                ) {
-//                    Text(
-//                        modifier = Modifier
-//                            .padding(4.dp),
-////                        text = "${index + 1}",
-//                        fontWeight = FontWeight.Bold,
-//                        fontSize = 14.sp
-//                    )
-                }
+                StatisticsBlock(label = "Followers", value = user.followers)
+                Divider(color = Color.Black, modifier = Modifier
+                    .height(40.dp)
+                    .width(2.dp))
+                StatisticsBlock(label = "Repository", value = user.repositories)
+                Divider(color = Color.Black, modifier = Modifier
+                    .height(40.dp)
+                    .width(2.dp))
+                StatisticsBlock(label = "Following", value = user.following)
             }
+            Spacer(modifier = Modifier.padding(vertical = 16.dp))
+            Text(text = user.biography)
+            Spacer(modifier = Modifier.padding(vertical = 16.dp))
 
+            Text(text = user.createAt())
         }
 
     }
-
 }
+
+@Composable
+fun StatisticsBlock(label: String, value: String) {
+    Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(text = value, style = MaterialTheme.typography.headlineLarge)
+        Text(text = label, style = MaterialTheme.typography.bodyLarge)
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable
