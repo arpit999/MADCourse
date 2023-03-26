@@ -21,8 +21,9 @@ class PagingSource(private val api: GithubApi, private val username: String) :
 
             val response = api.getUserList(username, page, params.loadSize).users
             val nextKey = if (response.isNotEmpty()) page + 1 else null
+            val prevKey = if (page == 1) null else page
 
-            LoadResult.Page(data = response, prevKey = if (page == 1) null else page - 1, nextKey = nextKey)
+            LoadResult.Page(data = response, prevKey = prevKey, nextKey = nextKey)
 
         } catch (e: Exception) {
             LoadResult.Error(e)

@@ -30,7 +30,7 @@ import com.example.madcourse.ui.components.SearchIcon
 @Composable
 fun ScreenA(viewModel: UserViewModel, navController: NavHostController) {
 
-    val users = remember { viewModel.getGitHubUsers() }.collectAsLazyPagingItems()
+    val users = remember(viewModel.searchText) { viewModel.getGitHubUsers() }.collectAsLazyPagingItems()
 
     Scaffold(topBar = {
         Surface(shadowElevation = 3.dp) {
@@ -159,15 +159,19 @@ fun LoadingItem() {
 @Composable
 fun UserCard(user: User, onUserClick: () -> Unit) {
 
-
     ElevatedCard(
         Modifier
             .fillMaxWidth()
             .heightIn(max = 130.dp),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
-
+    )
+    {
+        Row(
+            modifier = Modifier
+                .padding(vertical = 8.dp, horizontal = 8.dp)
+                .clickable { onUserClick() },
+            verticalAlignment = Alignment.CenterVertically
         ) {
-        Row(modifier = Modifier.clickable { onUserClick() }, verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
                 modifier = Modifier
                     .size(80.dp)
