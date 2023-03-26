@@ -1,14 +1,10 @@
 package com.example.madcourse.di
 
-import android.content.Context
-import androidx.room.Room
 import com.example.madcourse.BuildConfig
-import com.example.madcourse.domain.network.model.UserDataStore
-import com.example.madcourse.domain.room.UserDatabase
+import com.example.madcourse.domain.network.GithubApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -19,18 +15,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-    @Singleton // Tell Dagger-Hilt to create a singleton accessible everywhere in ApplicationComponent (i.e. everywhere in the application)
-    @Provides
-    fun provideYourDatabase(
-        @ApplicationContext appContext: Context
-    ) = Room
-        .databaseBuilder(appContext, UserDatabase::class.java, "user_db")
-        .build() // The reason we can construct a database for the repo
-
-    @Provides
-    @Singleton
-    fun provideYourDao(db: UserDatabase) = db.dao
 
     @Provides
     fun provideBaseUrl() = BuildConfig.BASE_URL
@@ -49,7 +33,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient, BASE_URL: String) =
+    fun provideRetrofit(okHttpClient: OkHttpClient, BASE_URL: String): Retrofit =
         Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl(BASE_URL)
@@ -57,9 +41,9 @@ object AppModule {
             .build()
 
     @Provides
-    fun provideDataStoreManager(@ApplicationContext context: Context): UserDataStore {
-        return UserDataStore(context)
+    @Singleton
+    fun provideGithubApi(retrofit: Retrofit): GithubApi {
+        return retrofit.create(GithubApi::class.java)
     }
-
 
 }

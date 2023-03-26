@@ -1,7 +1,6 @@
 package com.example.madcourse.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -11,15 +10,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.madcourse.domain.UserViewModel
-import com.example.madcourse.domain.network.model.users
 
 @Composable
 fun MyAppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    viewModel: UserViewModel = viewModel(),
     startDestination: String = AppNavigation.SCREEN_A.name
 ) {
+
+    val viewModel: UserViewModel = viewModel()
 
     NavHost(
         modifier = modifier,
@@ -28,21 +27,17 @@ fun MyAppNavHost(
     ) {
         composable(AppNavigation.SCREEN_A.name) {
             ScreenA(viewModel)
+//            ScreenB(viewModel, navController)
         }
-        composable(AppNavigation.SCREEN_B.name) {
-            ScreenB(viewModel, navController)
-        }
-        composable(AppNavigation.SCREEN_C.name + "/{tableId}", arguments = listOf(
+        composable(AppNavigation.SCREEN_B.name + "/{username}", arguments = listOf(
             navArgument("tableId") {
                 type = NavType.IntType
                 defaultValue = 1
             }
         )) { entry ->
-            val user = entry.arguments?.getInt("tableId", 1)
-            if (user != null) {
-                viewModel.getUser(user)
-            }
-            ScreenC(navController,viewModel.userDetails.collectAsState(users.first()))
+            val username = entry.arguments?.getInt("username")
+
+            ScreenC(navController)
         }
 
     }
@@ -52,5 +47,4 @@ fun MyAppNavHost(
 enum class AppNavigation {
     SCREEN_A,
     SCREEN_B,
-    SCREEN_C
 }

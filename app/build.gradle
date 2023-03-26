@@ -79,6 +79,7 @@ dependencies {
 
     // add below dependency for using room.
     implementation "androidx.room:room-ktx:$room_version"
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.1.0'
     // To use Kotlin annotation processing tool (kapt)
     kapt "androidx.room:room-compiler:$room_version"
 
@@ -90,6 +91,9 @@ dependencies {
 
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
+
+    //Image loading support
+    implementation("io.coil-kt:coil-compose:2.2.2")
 
     // DataStore
     implementation "androidx.datastore:datastore-preferences:1.0.0"
