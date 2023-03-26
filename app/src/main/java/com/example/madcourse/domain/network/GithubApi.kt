@@ -12,7 +12,7 @@ interface GithubApi {
     suspend fun getUserList(
         @Query("q") query: String,
         @Query("page") page: Int,
-        @Query("per_page") size: Int = 4
+        @Query("per_page") size: Int = 14
     ): UserList
 
     @GET("/users/{username}")

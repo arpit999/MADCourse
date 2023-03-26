@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.paging.LoadState
@@ -31,8 +30,6 @@ import com.example.madcourse.ui.components.SearchIcon
 @Composable
 fun ScreenA(viewModel: UserViewModel, navController: NavHostController) {
 
-//    val userList = viewModel.userList.collectAsStateWithLifecycle()
-
     val users = remember { viewModel.getGitHubUsers() }.collectAsLazyPagingItems()
 
     Scaffold(topBar = {
@@ -42,15 +39,10 @@ fun ScreenA(viewModel: UserViewModel, navController: NavHostController) {
     }) { paddingValues ->
 
         ScreenAContent(Modifier.padding(paddingValues),
-//            userList = userList,
             viewModel = viewModel,
             users = users,
             onSearchClick = {
-//                viewModel.getUsers(viewModel.getPageNumber())
                 viewModel.getGitHubUsers()
-            },
-            onTextChanged = {
-                viewModel.onSearchTextChanged(it)
             },
             onUserClick = {
                 viewModel.getUserDetails(it.username)
@@ -63,9 +55,7 @@ fun ScreenA(viewModel: UserViewModel, navController: NavHostController) {
 @Composable
 fun ScreenAContent(
     modifier: Modifier = Modifier,
-//    userList: State<List<User>>,
     onSearchClick: () -> Unit,
-    onTextChanged: (String) -> Unit,
     onUserClick: (User) -> Unit,
     users: LazyPagingItems<User>,
     viewModel: UserViewModel
@@ -106,23 +96,13 @@ fun ScreenAContent(
             )
         }
 
+        Spacer(modifier = Modifier.padding(vertical = 12.dp))
+
         LazyColumn(
             modifier = Modifier,
             contentPadding = PaddingValues(4.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-//            item {
-//                Text(
-//                    modifier = Modifier.align(Alignment.Start),
-//                    text = "Users",
-//                    style = MaterialTheme.typography.bodyMedium
-//                )
-//            }
-//            items(userList.value) { user ->
-//                UserCard(user) {
-//                    onUserClick(user)
-//                }
-//            }
 
             items(users) { user ->
                 user?.let {
@@ -135,9 +115,10 @@ fun ScreenAContent(
             when (users.loadState.append) {
                 LoadState.Loading -> item { LoadingItem() }
                 is LoadState.Error -> item {
-                    Popup() {
-                        Text(text = "Item not found")
-                    }
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) { Text(text = "No more Items OR not found") }
                 }
                 is LoadState.NotLoading -> Unit
             }
@@ -149,7 +130,6 @@ fun ScreenAContent(
 //                )} }
 //                is LoadState.NotLoading -> Unit
 //            }
-
 
         }
 
@@ -179,12 +159,11 @@ fun LoadingItem() {
 @Composable
 fun UserCard(user: User, onUserClick: () -> Unit) {
 
-    Spacer(modifier = Modifier.padding(vertical = 8.dp))
 
     ElevatedCard(
         Modifier
             .fillMaxWidth()
-            .heightIn(max = 120.dp),
+            .heightIn(max = 130.dp),
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
 
         ) {

@@ -6,7 +6,7 @@ import java.util.*
 
 data class UserDetails(
     @SerializedName("name")
-    val fullName: String,
+    val fullName: String?,
 
     @SerializedName("login")
     val userName: String,
@@ -24,7 +24,7 @@ data class UserDetails(
     val following: String,
 
     @SerializedName("bio")
-    val biography: String,
+    val biography: String?,
 
     @SerializedName("created_at")
     val createdAt: String,

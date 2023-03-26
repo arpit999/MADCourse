@@ -98,7 +98,7 @@ fun UserDetailCard(user: UserDetails) {
 
             Spacer(modifier = Modifier.padding(horizontal = 16.dp))
 
-            Text(text = user.fullName, style = MaterialTheme.typography.titleLarge)
+            user.fullName?.let { Text(text = it, style = MaterialTheme.typography.titleLarge) }
             Text(text = user.userName, style = MaterialTheme.typography.bodyLarge)
 
             Row(
@@ -120,7 +120,7 @@ fun UserDetailCard(user: UserDetails) {
                 StatisticsBlock(label = "Following", value = user.following)
             }
             Spacer(modifier = Modifier.padding(vertical = 16.dp))
-            Text(text = user.biography)
+            user.biography?.let { Text(text = it) }
             Spacer(modifier = Modifier.padding(vertical = 16.dp))
 
             Text(text = user.createAt())
