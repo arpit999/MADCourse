@@ -1,6 +1,6 @@
 # Assignment 3
 
 
-| Assignment 3 (User Directory)  |  
+| Assignment 4 (Github Users)  |  
 | ------------------------------------------- | 
-| ![Compose Basic](https://media.giphy.com/media/EgrvzUPhkItLPzJN05/giphy.gif) |  
+| ![Paging with compose](https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMTMwMjU4ZGFkMTQ5MzRiYjc4OWQwM2NiNjVmMzhiYWRiZTRjNWU4OSZjdD1n/ZgbWVYx4A63uYMiLXm/giphy.gif) |  
