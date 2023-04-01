@@ -1,7 +1,9 @@
 package com.example.madcourse.di
 
 import com.example.madcourse.BuildConfig
-import com.example.madcourse.domain.network.GithubApi
+import com.example.madcourse.domain.network.PostsApi
+import com.example.madcourse.domain.network.ProfileDetailsApi
+import com.example.madcourse.domain.network.utils.Constant
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -10,14 +12,13 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    @Provides
-    fun provideBaseUrl() = BuildConfig.BASE_URL
 
     @Provides
     @Singleton
@@ -33,18 +34,35 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient, BASE_URL: String): Retrofit =
+    @Named(Constant.retrofit_profile)
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit =
         Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl("https://random-data-api.com/")
             .client(okHttpClient)
             .build()
 
+    @Provides
+    @Singleton
+    @Named(Constant.retrofit_post)
+    fun providePostRetrofit(okHttpClient: OkHttpClient): Retrofit =
+        Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl("https://picsum.photos/v2/")
+            .client(okHttpClient)
+            .build()
 
     @Provides
     @Singleton
-    fun provideGithubApi(retrofit: Retrofit): GithubApi {
-        return retrofit.create(GithubApi::class.java)
+    fun provideGithubApi(@Named(Constant.retrofit_profile) retrofit: Retrofit): ProfileDetailsApi {
+        return retrofit.create(ProfileDetailsApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun providePostApi(@Named(Constant.retrofit_post) retrofit: Retrofit): PostsApi {
+        return retrofit.create(PostsApi::class.java)
+    }
+
 
 }
