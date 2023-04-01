@@ -1,4 +1,4 @@
-package com.example.madcourse.domain.network
+package com.example.madcourse.domain.network.api
 
 import com.example.madcourse.domain.network.model.Post
 import retrofit2.http.GET

@@ -1,6 +1,8 @@
 package com.example.madcourse.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -26,8 +28,14 @@ fun MyAppNavHost(
         startDestination = startDestination
     ) {
         composable(AppNavigation.SCREEN_A.name) {
-            ScreenA(viewModel, navController)
-//            ScreenB(viewModel, navController)
+
+            val profile by viewModel.profileDetails.collectAsState()
+            val posts = viewModel.posts
+
+            ScreenA(profile, posts) {
+                // TODO go to detail screen
+            }
+
         }
         composable(AppNavigation.SCREEN_B.name + "/{username}", arguments = listOf(
             navArgument("username") {

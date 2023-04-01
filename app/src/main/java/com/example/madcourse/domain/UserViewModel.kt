@@ -3,8 +3,8 @@ package com.example.madcourse.domain
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.madcourse.domain.network.PostsApi
-import com.example.madcourse.domain.network.ProfileDetailsApi
+import com.example.madcourse.domain.network.api.PostsApi
+import com.example.madcourse.domain.network.api.ProfileDetailsApi
 import com.example.madcourse.domain.network.model.Post
 import com.example.madcourse.domain.network.model.Profile
 import dagger.hilt.android.lifecycle.HiltViewModel

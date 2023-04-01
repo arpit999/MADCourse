@@ -1,8 +1,8 @@
 package com.example.madcourse.di
 
 import com.example.madcourse.BuildConfig
-import com.example.madcourse.domain.network.PostsApi
-import com.example.madcourse.domain.network.ProfileDetailsApi
+import com.example.madcourse.domain.network.api.PostsApi
+import com.example.madcourse.domain.network.api.ProfileDetailsApi
 import com.example.madcourse.domain.network.utils.Constant
 import dagger.Module
 import dagger.Provides

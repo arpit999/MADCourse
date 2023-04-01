@@ -2,14 +2,17 @@ package com.example.madcourse.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,26 +24,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.madcourse.R
-import com.example.madcourse.domain.UserViewModel
 import com.example.madcourse.domain.network.model.*
 import com.example.madcourse.ui.components.HorizontalSpacer
+import com.example.madcourse.ui.components.RippleCustomTheme
 import com.example.madcourse.ui.components.VerticalSpacer
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScreenA(viewModel: UserViewModel, navController: NavHostController) {
-
-    val profile by viewModel.profileDetails.collectAsState()
-    val posts = viewModel.posts
+fun ScreenA(profile: Profile?, posts: SnapshotStateList<Post>, onPostClick: (Post) -> Unit) {
 
     Scaffold(topBar = {
         Surface(shadowElevation = 3.dp) {
-            TopAppBar(title = { Text(text = "User Directory") })
+            TopAppBar(title = { Text(text = "User Profile") })
         }
     }) { paddingValues ->
 
@@ -52,10 +51,16 @@ fun ScreenA(viewModel: UserViewModel, navController: NavHostController) {
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // Profile Description
             item(span = { GridItemSpan(3) }) { ProfileDetails(profile = profile) }
-            items(posts) { item ->
-                RectangleImage(url = item.downloadUrl)
+
+            // Posts
+            items(posts) { post ->
+                RectangleImage(url = post.downloadUrl) {
+                    onPostClick(post)
+                }
             }
+
         }
 
     }
@@ -134,17 +139,25 @@ fun ProfileDetails(modifier: Modifier = Modifier, profile: Profile?) {
 }
 
 @Composable
-fun RectangleImage(url: String) {
-    ElevatedCard(modifier = Modifier.size(90.dp), elevation = CardDefaults.elevatedCardElevation(3.dp)) {
-        AsyncImage(
+fun RectangleImage(url: String, onPostClick: () -> Unit) {
+
+    CompositionLocalProvider(LocalRippleTheme provides RippleCustomTheme) {
+        ElevatedCard(
             modifier = Modifier
-                .clip(RectangleShape),
-            model = ImageRequest.Builder(LocalContext.current).data(url).crossfade(true).build(),
-            placeholder = painterResource(R.drawable.placeholder),
-            error = painterResource(id = R.drawable.error),
-            contentScale = ContentScale.Crop,
-            contentDescription = null
-        )
+                .size(90.dp)
+                .clickable { onPostClick() },
+            elevation = CardDefaults.elevatedCardElevation(3.dp)
+        ) {
+            AsyncImage(
+                modifier = Modifier
+                    .clip(RectangleShape),
+                model = ImageRequest.Builder(LocalContext.current).data(url).crossfade(true).build(),
+                placeholder = painterResource(R.drawable.placeholder),
+                error = painterResource(id = R.drawable.error),
+                contentScale = ContentScale.Crop,
+                contentDescription = null
+            )
+        }
     }
 }
 
