@@ -5,8 +5,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -32,10 +33,12 @@ fun ClearIcon(onClear: () -> Unit) {
 }
 
 @Composable
-fun SearchIcon() {
+fun HomeIcon(modifier: Modifier = Modifier) {
     Icon(
-        imageVector = Icons.Filled.Search,
-        contentDescription = "Search"
+        modifier = modifier,
+        imageVector = Icons.Filled.Home,
+        contentDescription = null,
+        tint = MaterialTheme.colorScheme.primary
     )
 }
 

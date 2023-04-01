@@ -36,9 +36,10 @@ object AppModule {
     fun provideRetrofit(okHttpClient: OkHttpClient, BASE_URL: String): Retrofit =
         Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BASE_URL)
+            .baseUrl("https://random-data-api.com/")
             .client(okHttpClient)
             .build()
+
 
     @Provides
     @Singleton

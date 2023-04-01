@@ -34,9 +34,7 @@ fun MyAppNavHost(
                 type = NavType.StringType
                 defaultValue = ""
             }
-        )) { entry ->
-            val username = entry.arguments?.getString("username")
-
+        )) {
             ScreenB(viewModel, navController)
         }
 

@@ -1,36 +1,52 @@
 package com.example.madcourse.ui
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import androidx.paging.LoadState
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.items
 import coil.compose.AsyncImage
+import com.example.madcourse.R
 import com.example.madcourse.domain.UserViewModel
-import com.example.madcourse.domain.network.model.User
-import com.example.madcourse.ui.components.ClearIcon
-import com.example.madcourse.ui.components.SearchIcon
+import com.example.madcourse.domain.network.model.*
+import com.example.madcourse.ui.components.HorizontalSpacer
+import com.example.madcourse.ui.components.VerticalSpacer
+
+val profile = Profile(
+    firstName = "Alice",
+    lastName = "Jon",
+    username = "Doe",
+    employment = Employment(title = "Administrator"),
+    email = "",
+    address = Address(
+        streetName = "57 Forest AVe",
+        city = "Hamilton",
+        streetAddress = "",
+        zipCode = "L8K 0A3",
+        state = "Gujarat",
+        country = "Canada"
+    ),
+    picture = "",
+    subscription = Subscription(plan = "Premium", status = "Idle", term = "Monthly", "Paypal")
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScreenA(viewModel: UserViewModel, navController: NavHostController) {
 
-    val users = remember(viewModel.searchText) { viewModel.getGitHubUsers() }.collectAsLazyPagingItems()
+    val profile by viewModel.userProfile.collectAsState()
 
     Scaffold(topBar = {
         Surface(shadowElevation = 3.dp) {
@@ -38,104 +54,11 @@ fun ScreenA(viewModel: UserViewModel, navController: NavHostController) {
         }
     }) { paddingValues ->
 
-        ScreenAContent(Modifier.padding(paddingValues),
-            viewModel = viewModel,
-            users = users,
-            onSearchClick = {
-                viewModel.getGitHubUsers()
-            },
-            onUserClick = {
-                viewModel.getUserDetails(it.username)
-                navController.navigate("${AppNavigation.SCREEN_B.name}/${it.username}")
-            }
-        )
+        ProfileDetails(Modifier.padding(paddingValues), profile = profile)
+
     }
 }
 
-@Composable
-fun ScreenAContent(
-    modifier: Modifier = Modifier,
-    onSearchClick: () -> Unit,
-    onUserClick: (User) -> Unit,
-    users: LazyPagingItems<User>,
-    viewModel: UserViewModel
-) {
-    val searchText by viewModel.searchText.collectAsStateWithLifecycle()
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = 16.dp, horizontal = 12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-        OutlinedTextField(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            value = searchText,
-            onValueChange = viewModel::onSearchTextChanged,
-//            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-            placeholder = { Text(text = "Search Here ...", color = Color.Gray) },
-            leadingIcon = { SearchIcon() },
-            trailingIcon = {
-                if (searchText.isNotEmpty()) {
-                    ClearIcon {
-                        viewModel.onSearchTextChanged("")
-                    }
-                }
-            },
-        )
-
-        Spacer(modifier = Modifier.padding(vertical = 8.dp))
-
-        ElevatedButton(shape = RoundedCornerShape(16.dp), onClick = { onSearchClick() }) {
-            Text(
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
-                text = "Search",
-                style = MaterialTheme.typography.titleLarge
-            )
-        }
-
-        Spacer(modifier = Modifier.padding(vertical = 12.dp))
-
-        LazyColumn(
-            modifier = Modifier,
-            contentPadding = PaddingValues(4.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-
-            items(users) { user ->
-                user?.let {
-                    UserCard(it) {
-                        onUserClick(it)
-                    }
-                }
-            }
-
-            when (users.loadState.append) {
-                LoadState.Loading -> item { LoadingItem() }
-                is LoadState.Error -> item {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) { Text(text = "No more Items OR not found") }
-                }
-                is LoadState.NotLoading -> Unit
-            }
-
-//            when(userList.loadState.refresh){
-//                LoadState.Loading -> item { Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){ CircularProgressIndicator()} }
-//                is LoadState.Error ->item { Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){ Text(
-//                    text = "Item not found"
-//                )} }
-//                is LoadState.NotLoading -> Unit
-//            }
-
-        }
-
-    }
-
-}
 
 @Composable
 fun LoadingItem() {
@@ -155,6 +78,80 @@ fun LoadingItem() {
 
     }
 }
+
+
+@Composable
+fun ProfileDetails(modifier: Modifier = Modifier, profile: Profile?) {
+
+    Column(
+        modifier = modifier
+            .padding(12.dp)
+    ) {
+        Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
+            AsyncImage(
+                modifier = Modifier
+                    .size(90.dp)
+                    .clip(CircleShape)
+                    .border(border = BorderStroke(2.dp, Color.Black), CircleShape),
+                model = profile?.picture,
+                placeholder = painterResource(R.drawable.ic_launcher_background),
+                contentDescription = null
+            )
+
+            HorizontalSpacer(size = 16)
+
+            Column {
+                profile?.let { profile ->
+                    Text(text = profile.getFullName(), style = MaterialTheme.typography.titleLarge)
+                    Text(
+                        text = profile.employment.title,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.Gray
+                    )
+                    Text(text = profile.email, style = MaterialTheme.typography.bodyMedium, color = Color.Gray)
+                }
+            }
+        }
+
+
+        Column(Modifier.padding(vertical = 12.dp, horizontal = 8.dp)) {
+            Text(text = "Address", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+            Divider()
+            profile?.address?.let { address ->
+                VerticalSpacer(size = 4)
+                Text(
+                    text = address.streetName + " " + address.streetAddress,
+                    style = MaterialTheme.typography.bodyLarge, color = Color.Gray
+                )
+                Text(
+                    text = address.zipCode + ", " + address.city + " " + address.state,
+                    style = MaterialTheme.typography.bodyLarge, color = Color.Gray
+                )
+                Text(text = address.country, style = MaterialTheme.typography.bodyLarge, color = Color.Gray)
+            }
+        }
+
+        //SUBSCRIPTION
+        Column(Modifier.padding(vertical = 4.dp, horizontal = 8.dp)) {
+            Text(text = "Subscription", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Bold)
+            Divider()
+            profile?.subscription?.let { subscription ->
+                VerticalSpacer(size = 4)
+                Text(
+                    text = subscription.plan + " (" + subscription.term + ")",
+                    style = MaterialTheme.typography.bodyLarge, color = Color.Gray
+                )
+                Text(
+                    text = "Payment Method " + subscription.paymentMethod,
+                    style = MaterialTheme.typography.bodyLarge, color = Color.Gray
+                )
+            }
+        }
+
+
+    }
+}
+
 
 @Composable
 fun UserCard(user: User, onUserClick: () -> Unit) {
@@ -187,12 +184,12 @@ fun UserCard(user: User, onUserClick: () -> Unit) {
         }
     }
 
-    Spacer(modifier = Modifier.padding(bottom = 12.dp))
+    VerticalSpacer(size = 12)
 
 }
 
 @Preview
 @Composable
 fun PreviewScreenA() {
-//    ScreenAContent() {}
+    ProfileDetails(profile = profile)
 }
