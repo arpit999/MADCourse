@@ -1,4 +1,4 @@
-# Assignment 3 (User Directory)
+# Assignment 3 (ComposeUI + Room + DI + DataStore)
 
 
 | <a href="https://github.com/arpit999/MADCourse/blob/Assignemnt_3/MAD%20assignment%203.pdf">Assignment pdf</a>  |  
