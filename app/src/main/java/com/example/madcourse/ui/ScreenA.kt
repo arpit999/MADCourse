@@ -4,15 +4,11 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,19 +19,24 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.madcourse.R
 import com.example.madcourse.domain.network.model.*
+import com.example.madcourse.domain.network.utils.Constant
 import com.example.madcourse.ui.components.HorizontalSpacer
+import com.example.madcourse.ui.components.RetryItem
 import com.example.madcourse.ui.components.RippleCustomTheme
 import com.example.madcourse.ui.components.VerticalSpacer
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScreenA(profile: Profile?, posts: SnapshotStateList<Post>, onPostClick: (Post) -> Unit) {
+fun ScreenA(profile: Profile?, posts: LazyPagingItems<Post>, onPostClick: (Post) -> Unit) {
 
     Scaffold(topBar = {
         Surface(shadowElevation = 3.dp) {
@@ -55,13 +56,50 @@ fun ScreenA(profile: Profile?, posts: SnapshotStateList<Post>, onPostClick: (Pos
             item(span = { GridItemSpan(3) }) { ProfileDetails(profile = profile) }
 
             // Posts
-            items(posts) { post ->
-                RectangleImage(url = post.downloadUrl) {
-                    onPostClick(post)
+            items(items = posts) { post ->
+                if (post != null) {
+                    RectangleImage(
+                        url = Constant.generateImageUrl(post.id, 500, 500),
+                        height = 90,
+                        width = 90
+                    ) {
+                        onPostClick(post)
+                    }
                 }
             }
 
         }
+
+
+        posts.apply {
+            when {
+                loadState.refresh is LoadState.Loading -> {
+                    LoadingProgressBar(modifier = Modifier.fillMaxSize())
+                }
+
+                loadState.append is LoadState.Loading -> {
+                    LoadingProgressBar(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    )
+                }
+
+                loadState.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && posts.itemCount < 1 -> {
+                    Text(text = "No more posts available")
+                }
+
+                loadState.refresh is LoadState.Error -> {}
+
+                loadState.append is LoadState.Error -> {
+                    RetryItem(
+                        modifier = Modifier.fillMaxSize(),
+                        onRetryClick = { retry() }
+                    )
+                }
+            }
+        }
+
 
     }
 }
@@ -74,15 +112,8 @@ fun ProfileDetails(modifier: Modifier = Modifier, profile: Profile?) {
         modifier = modifier.padding(vertical = 12.dp)
     ) {
         Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
-            AsyncImage(
-                modifier = Modifier
-                    .size(90.dp)
-                    .clip(CircleShape)
-                    .border(border = BorderStroke(2.dp, Color.Black), CircleShape),
-                model = profile?.picture,
-                placeholder = painterResource(R.drawable.ic_launcher_background),
-                contentDescription = null
-            )
+
+            CircleImage(url = profile?.picture)
 
             HorizontalSpacer(size = 16)
 
@@ -139,12 +170,33 @@ fun ProfileDetails(modifier: Modifier = Modifier, profile: Profile?) {
 }
 
 @Composable
-fun RectangleImage(url: String, onPostClick: () -> Unit) {
+fun CircleImage(url: String?, size: Dp = 90.dp) {
+    AsyncImage(
+        modifier = Modifier
+            .size(size)
+            .clip(CircleShape)
+            .border(border = BorderStroke(2.dp, Color.Black), CircleShape),
+        model = ImageRequest.Builder(LocalContext.current).data(url).crossfade(true).build(),
+        placeholder = painterResource(R.drawable.placeholder),
+        error = painterResource(id = R.drawable.error),
+        contentScale = ContentScale.Crop,
+        contentDescription = null
+    )
 
+}
+
+@Composable
+fun RectangleImage(
+    modifier: Modifier = Modifier,
+    height: Int = Int.MAX_VALUE,
+    width: Int = Int.MAX_VALUE,
+    url: String,
+    onPostClick: () -> Unit
+) {
     CompositionLocalProvider(LocalRippleTheme provides RippleCustomTheme) {
         ElevatedCard(
-            modifier = Modifier
-                .size(90.dp)
+            modifier = modifier
+                .size(height.dp, width.dp)
                 .clickable { onPostClick() },
             elevation = CardDefaults.elevatedCardElevation(3.dp)
         ) {
@@ -163,24 +215,39 @@ fun RectangleImage(url: String, onPostClick: () -> Unit) {
 
 
 @Composable
-fun LoadingItem() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        contentAlignment = Alignment.Center
-    ) {
+fun LoadingProgressBar(
+    modifier: Modifier = Modifier,
+    size: Dp = 40.dp,
+    color: Color = MaterialTheme.colorScheme.primary,
+    strokeWidth: Dp = 4.dp
+) {
+    Box(modifier = modifier) {
         CircularProgressIndicator(
             modifier = Modifier
-                .width(42.dp)
-                .height(42.dp)
-                .padding(8.dp),
-            strokeWidth = 5.dp
+                .size(size)
+                .align(Alignment.Center),
+            color = color,
+            strokeWidth = strokeWidth
         )
-
     }
 }
 
+inline fun <T : Any> LazyGridScope.items(
+    items: LazyPagingItems<T>,
+    noinline key: ((item: T) -> Any)? = null,
+    noinline span: (LazyGridItemSpanScope.(item: T?) -> GridItemSpan)? = null,
+    noinline contentType: (item: T?) -> Any? = { null },
+    crossinline itemContent: @Composable LazyGridItemScope.(item: T?) -> Unit
+) = items(
+    count = items.itemCount,
+    key = if (key != null) { index: Int -> items[index]?.let(key) ?: index } else null,
+    span = if (span != null) {
+        { span(items[it]) }
+    } else null,
+    contentType = { index: Int -> contentType(items[index]) }
+) {
+    itemContent(items[it])
+}
 
 @Preview
 @Composable

@@ -3,30 +3,29 @@ package com.example.madcourse.ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.madcourse.R
-import com.example.madcourse.domain.UserViewModel
-import com.example.madcourse.domain.network.model.Address
-import com.example.madcourse.domain.network.model.Employment
-import com.example.madcourse.domain.network.model.Profile
-import com.example.madcourse.domain.network.model.Subscription
+import com.example.madcourse.domain.network.model.*
+import com.example.madcourse.domain.network.utils.Constant
 import com.example.madcourse.ui.components.BackIcon
+import com.example.madcourse.ui.components.HyperlinkText
+import com.example.madcourse.ui.components.VerticalSpacer
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScreenB(viewModel: UserViewModel, navController: NavHostController) {
+fun ScreenB(post: Post, navController: NavHostController) {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             Surface(shadowElevation = 3.dp) {
                 TopAppBar(
-                    title = { Text(text = stringResource(id = R.string.user_details)) },
+                    title = { Text(text = "Post Details") },
                     navigationIcon = {
                         BackIcon {
                             navController.popBackStack()
@@ -37,23 +36,50 @@ fun ScreenB(viewModel: UserViewModel, navController: NavHostController) {
         },
     ) { paddingValues ->
 
-        Column(
+        ElevatedCard(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(paddingValues)
-                .padding(vertical = 16.dp)
+                .padding(16.dp),
+            elevation = CardDefaults.elevatedCardElevation(4.dp)
         ) {
-//            userDetails.value?.let { it -> UserDetailCard(it) }
+
+            RectangleImage(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp),
+                url = Constant.generateImageUrl(post.id, 1920, 1080),
+            ) {}
+
+            VerticalSpacer(size = 8)
+
+            Column(Modifier.padding(horizontal = 16.dp, vertical = 20.dp)) {
+                Text(
+                    text = "POST : ${post.id}",
+                    style = MaterialTheme.typography.labelLarge, color = Color.Black, fontWeight = FontWeight.Bold
+                )
+                Divider()
+                VerticalSpacer(size = 4)
+                Text(
+                    text = "Author: ${post.author}",
+                    style = MaterialTheme.typography.labelLarge
+                )
+
+                Text(
+                    text = "Dimensions: ${post.width} X ${post.height}",
+                    style = MaterialTheme.typography.labelLarge,
+                )
+
+                HyperlinkText(
+                    fullText = "Download: " + post.downloadUrl,
+                    linkMap = mapOf(post.downloadUrl to post.downloadUrl),
+                    linkFontStyle = MaterialTheme.typography.labelLarge.fontStyle,
+                    linkTextDecoration = TextDecoration.Underline,
+                    linkTextColor = Color.Blue
+                )
+            }
+
         }
-    }
-}
-
-
-@Composable
-fun StatisticsBlock(label: String, value: String) {
-    Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = value, style = MaterialTheme.typography.headlineLarge)
-        Text(text = label, style = MaterialTheme.typography.bodyLarge)
     }
 }
 

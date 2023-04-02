@@ -4,8 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -24,10 +24,10 @@ fun BackIcon(modifier: Modifier = Modifier, onBackClick: () -> Unit) {
 }
 
 @Composable
-fun ClearIcon(onClear: () -> Unit) {
+fun InfoIcon(onClear: () -> Unit) {
     Icon(
         modifier = Modifier.clickable { onClear() },
-        imageVector = Icons.Filled.Clear,
+        imageVector = Icons.Filled.Info,
         contentDescription = "Back"
     )
 }

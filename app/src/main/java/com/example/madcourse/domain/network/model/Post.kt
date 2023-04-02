@@ -3,7 +3,7 @@ package com.example.madcourse.domain.network.model
 import com.google.gson.annotations.SerializedName
 
 data class Post(
-    @SerializedName("id") val id: String,
+    @SerializedName("id") val id: Int,
     @SerializedName("author") val author: String,
     @SerializedName("width") val width: String,
     @SerializedName("height") val height: String,
