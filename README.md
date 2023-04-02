@@ -1,5 +1,5 @@
-# Assignment 4 (ComposePaging + LazyColumn + Github-API + DI)
-
+# Assignment 4
+### (ComposePaging + LazyGrid + Navigation + Github-API + DI + Coil)
 
 | <a href="https://github.com/arpit999/MADCourse/blob/Assignment_4/MAD%20assignment%204.pdf">Assignment pdf</a>   |  
 | ------------------------------------------- | 
