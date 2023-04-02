@@ -1,4 +1,4 @@
-# Assignment 4 (ComposePaging + LazyColumn + API-call + DI)
+# Assignment 4 (ComposePaging + LazyColumn + Github-API + DI)
 
 
 | <a href="https://github.com/arpit999/MADCourse/blob/Assignment_4/MAD%20assignment%204.pdf">Assignment pdf</a>   |  
