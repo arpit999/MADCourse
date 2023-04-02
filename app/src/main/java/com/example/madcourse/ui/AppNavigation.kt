@@ -1,6 +1,7 @@
 package com.example.madcourse.ui
 
 import android.util.Log
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,6 +26,9 @@ fun MyAppNavHost(
 ) {
 
     val viewModel: UserViewModel = viewModel()
+    val pagingItems = remember {
+        viewModel.getPaginatedPosts()
+    }.collectAsLazyPagingItems()
 
     NavHost(
         modifier = modifier,
@@ -34,12 +38,10 @@ fun MyAppNavHost(
         composable(AppNavigation.ScreenA.route) {
 
             val profile by viewModel.profileDetails.collectAsState()
-            val posts = viewModel.posts
-            val pagingItems = remember {
-                viewModel.getPaginatedPosts()
-            }.collectAsLazyPagingItems()
+//            val posts = viewModel.posts
 
             ScreenA(profile, pagingItems) {
+                Log.d("TAG", "ScreenA click id : ${it.id}")
                 navController.navigate(AppNavigation.ScreenB.passId(it.id))
             }
 
@@ -51,10 +53,19 @@ fun MyAppNavHost(
         )) { backStackEntry ->
             val id = backStackEntry.arguments?.getInt(Constant.id) ?: -1
             Log.d("TAG", "Id: $id")
-//            val post = viewModel.posts[id] TODO Question - It is crashing sometimes on post click says that  java.lang.IndexOutOfBoundsException: index: 34, size: 34
-            val post = viewModel.posts[id] ?: viewModel.posts.first()
+            Log.d("TAG", "pagingItems: ${pagingItems.itemCount}")
 
-            ScreenB(post, navController)
+            val index =
+                pagingItems.itemSnapshotList.indexOfFirst { it?.id == id } // Very important otherwise we will get wrong item from active paginated list.
+            val post = pagingItems[index]
+
+            Log.d("TAG", "Post: $post")
+
+            if (post != null) {
+                ScreenB(post, navController)
+            } else {
+                Text(text = "Item not found")
+            }
         }
 
     }

@@ -1,6 +1,5 @@
 package com.example.madcourse.domain
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -27,14 +26,10 @@ class UserViewModel @Inject constructor(
 
     init {
         getProfileDetails()
-        getPosts()
     }
 
     private val _profileDetails: MutableStateFlow<Profile?> = MutableStateFlow(null)
     val profileDetails: StateFlow<Profile?> = _profileDetails
-
-    private val _posts = mutableStateListOf<Post>()
-    val posts get() = _posts
 
     private fun getProfileDetails() {
         viewModelScope.launch {
@@ -48,14 +43,5 @@ class UserViewModel @Inject constructor(
         Pager(config = PagingConfig(pageSize = 5)) {
             PostPagingSource(postsApi)
         }.flow.cachedIn(viewModelScope)
-
-    //Regular Posts page
-    private fun getPosts() {
-        viewModelScope.launch {
-            val result = postsApi.getPosts(1, 34)
-            _posts.addAll(result)
-        }
-    }
-
 
 }
