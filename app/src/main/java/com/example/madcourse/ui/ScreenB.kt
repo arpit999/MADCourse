@@ -14,6 +14,7 @@ import com.example.madcourse.domain.network.model.*
 import com.example.madcourse.domain.network.utils.Constant
 import com.example.madcourse.ui.components.BackIcon
 import com.example.madcourse.ui.components.HyperlinkText
+import com.example.madcourse.ui.components.RectangleImage
 import com.example.madcourse.ui.components.VerticalSpacer
 
 @OptIn(ExperimentalMaterial3Api::class)
