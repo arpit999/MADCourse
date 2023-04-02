@@ -1,4 +1,4 @@
-# Assignment 5  (ComposePaging + LazyGrid + Scroll)
+# Assignment 5  (ComposePaging + LazyGrid + API-call + DI + Coil)
 
 
 | <a href="https://github.com/arpit999/MADCourse/blob/Assignment_5/MAD%20assignment%205.pdf" target="_blank">Assignment pdf</a>  |  
