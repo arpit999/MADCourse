@@ -3,6 +3,7 @@ package com.example.madcourse.di
 import com.example.madcourse.BuildConfig
 import com.example.madcourse.domain.network.api.PostsApi
 import com.example.madcourse.domain.network.api.ProfileDetailsApi
+import com.example.madcourse.domain.network.api.UserApi
 import com.example.madcourse.domain.network.utils.Constant
 import dagger.Module
 import dagger.Provides
@@ -44,6 +45,16 @@ object AppModule {
 
     @Provides
     @Singleton
+    @Named(Constant.USER_API)
+    fun provideUserRetrofit(okHttpClient: OkHttpClient): Retrofit =
+        Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(Constant.BASE_URL)
+            .client(okHttpClient)
+            .build()
+
+    @Provides
+    @Singleton
     @Named(Constant.retrofit_post)
     fun providePostRetrofit(okHttpClient: OkHttpClient): Retrofit =
         Retrofit.Builder()
@@ -64,5 +75,10 @@ object AppModule {
         return retrofit.create(PostsApi::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideUserApi(@Named(Constant.USER_API) retrofit: Retrofit): UserApi {
+        return retrofit.create(UserApi::class.java)
+    }
 
 }

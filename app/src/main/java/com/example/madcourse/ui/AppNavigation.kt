@@ -7,6 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -16,7 +17,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.madcourse.domain.UserViewModel
+import com.example.madcourse.domain.network.model.UserDetail
 import com.example.madcourse.domain.network.utils.Constant
+import com.example.madcourse.domain.network.utils.NetworkResult
 
 @Composable
 fun MyAppNavHost(
@@ -51,18 +54,20 @@ fun MyAppNavHost(
                 type = NavType.IntType
             }
         )) { backStackEntry ->
-            val id = backStackEntry.arguments?.getInt(Constant.id) ?: -1
+            val id = backStackEntry.arguments?.getString(Constant.id) ?: ""
             Log.d("TAG", "Id: $id")
             Log.d("TAG", "pagingItems: ${pagingItems.itemCount}")
 
-            val index =
-                pagingItems.itemSnapshotList.indexOfFirst { it?.id == id } // Very important otherwise we will get wrong item from active paginated list.
-            val post = pagingItems[index]
+//            val index =
+//                pagingItems.itemSnapshotList.indexOfFirst { it?.id.contentEquals(id)  } // Very important otherwise we will get wrong item from active paginated list.
+//            val user = pagingItems[index]
 
-            Log.d("TAG", "Post: $post")
+//            Log.d("TAG", "Post: $user")
 
-            if (post != null) {
-                ScreenB(post, navController)
+            val userDetail = viewModel.userDetail.collectAsStateWithLifecycle()
+
+            if (userDetail.value is NetworkResult.Success) {
+                ScreenB((userDetail.value as NetworkResult.Success<UserDetail>).result, navController)
             } else {
                 Text(text = "Item not found")
             }
@@ -74,8 +79,8 @@ fun MyAppNavHost(
 sealed class AppNavigation(val route: String) {
     object ScreenA : AppNavigation(route = "HOME")
     object ScreenB : AppNavigation(route = "DETAILS/{${Constant.id}}") {
-        fun passId(id: Int): String {
-            return this.route.replace(oldValue = "{${Constant.id}}", newValue = "$id")
+        fun passId(id: String): String {
+            return this.route.replace(oldValue = "{${Constant.id}}", newValue = id)
         }
     }
 }

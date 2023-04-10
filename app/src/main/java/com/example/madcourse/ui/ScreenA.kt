@@ -20,7 +20,7 @@ import com.example.madcourse.ui.components.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ScreenA(profile: Profile?, posts: LazyPagingItems<Post>, onPostClick: (Post) -> Unit) {
+fun ScreenA(profile: Profile?, users: LazyPagingItems<User>, onPostClick: (User) -> Unit) {
 
     Scaffold(topBar = {
         Surface(shadowElevation = 3.dp) {
@@ -40,14 +40,14 @@ fun ScreenA(profile: Profile?, posts: LazyPagingItems<Post>, onPostClick: (Post)
             item(span = { GridItemSpan(3) }) { ProfileDetails(profile = profile) }
 
             // Posts
-            items(items = posts) { post ->
-                if (post != null) {
+            items(items = users) { user ->
+                if (user != null) {
                     RectangleImage(
-                        url = Constant.generateImageUrl(post.id, 500, 500),
+                        url = user.profilePicture,
                         height = 90,
                         width = 90
                     ) {
-                        onPostClick(post)
+                        onPostClick(user)
                     }
                 }
             }
@@ -55,7 +55,7 @@ fun ScreenA(profile: Profile?, posts: LazyPagingItems<Post>, onPostClick: (Post)
         }
 
 
-        posts.apply {
+        users.apply {
             when {
                 loadState.refresh is LoadState.Loading -> {
                     LoadingProgressBar(modifier = Modifier.fillMaxSize())
@@ -69,7 +69,7 @@ fun ScreenA(profile: Profile?, posts: LazyPagingItems<Post>, onPostClick: (Post)
                     )
                 }
 
-                loadState.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && posts.itemCount < 1 -> {
+                loadState.refresh is LoadState.NotLoading && loadState.append.endOfPaginationReached && users.itemCount < 1 -> {
                     Text(text = "No more posts available")
                 }
 

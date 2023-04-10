@@ -1,11 +1,8 @@
 package com.example.madcourse.domain.network.utils
 
-sealed class NetworkResult<T>(
-    val data: T? = null,
-    val message: String? = null
-) {
-    class Idle<T> : NetworkResult<T>()
-    class Loading<T> : NetworkResult<T>()
-    class Success<T>(data: T) : NetworkResult<T>(data)
-    class Error<T>(message: String?, data: T? = null) : NetworkResult<T>(data, message)
+sealed class NetworkResult<out T:Any> {
+    data class Success<T : Any> (val result : T) : NetworkResult<T>()
+    data class Error (val message : String) : NetworkResult<Nothing>()
+    object Loading : NetworkResult<Nothing>()
+    object Idle : NetworkResult<Nothing>()
 }

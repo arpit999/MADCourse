@@ -3,6 +3,7 @@ package com.example.madcourse.ui.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ripple.LocalRippleTheme
@@ -57,11 +58,12 @@ fun RectangleImage(
         ) {
             AsyncImage(
                 modifier = Modifier
+                    .fillMaxSize()
                     .clip(RectangleShape),
                 model = ImageRequest.Builder(LocalContext.current).data(url).crossfade(true).build(),
                 placeholder = painterResource(R.drawable.placeholder),
                 error = painterResource(id = R.drawable.error),
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.FillBounds,
                 contentDescription = null
             )
         }
