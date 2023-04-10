@@ -25,7 +25,7 @@ import com.example.madcourse.domain.network.utils.NetworkResult
 fun MyAppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: String = AppNavigation.ScreenA.route
+    startDestination: String = AppNavigation.UserList.route
 ) {
 
     val viewModel: UserViewModel = viewModel()
@@ -38,18 +38,18 @@ fun MyAppNavHost(
         navController = navController,
         startDestination = startDestination
     ) {
-        composable(AppNavigation.ScreenA.route) {
+        composable(AppNavigation.UserList.route) {
 
             val profile by viewModel.profileDetails.collectAsState()
 //            val posts = viewModel.posts
 
             ScreenA(profile, pagingItems) {
                 Log.d("TAG", "ScreenA click id : ${it.id}")
-                navController.navigate(AppNavigation.ScreenB.passId(it.id))
+                navController.navigate(AppNavigation.UserProfile.passId(it.id))
             }
 
         }
-        composable(AppNavigation.ScreenB.route, arguments = listOf(
+        composable(AppNavigation.UserProfile.route, arguments = listOf(
             navArgument("id") {
                 type = NavType.IntType
             }
@@ -77,8 +77,8 @@ fun MyAppNavHost(
 }
 
 sealed class AppNavigation(val route: String) {
-    object ScreenA : AppNavigation(route = "HOME")
-    object ScreenB : AppNavigation(route = "DETAILS/{${Constant.id}}") {
+    object UserList : AppNavigation(route = "HOME")
+    object UserProfile : AppNavigation(route = "DETAILS/{${Constant.id}}") {
         fun passId(id: String): String {
             return this.route.replace(oldValue = "{${Constant.id}}", newValue = id)
         }

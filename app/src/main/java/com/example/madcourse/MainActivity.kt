@@ -16,7 +16,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MADCourseTheme {
-                MyAppNavHost(startDestination = AppNavigation.ScreenA.route)
+                MyAppNavHost(startDestination = AppNavigation.UserList.route)
             }
         }
 

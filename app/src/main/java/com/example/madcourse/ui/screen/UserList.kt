@@ -14,19 +14,13 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.example.madcourse.domain.network.model.*
-import com.example.madcourse.domain.network.utils.Constant
 import com.example.madcourse.ui.components.*
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScreenA(profile: Profile?, users: LazyPagingItems<User>, onPostClick: (User) -> Unit) {
 
-    Scaffold(topBar = {
-        Surface(shadowElevation = 3.dp) {
-            TopAppBar(title = { Text(text = "User Profile") })
-        }
-    }) { paddingValues ->
+    Scaffold(topBar = { AppBarWithTitle(title = "Users") }) { paddingValues ->
 
         LazyVerticalGrid(
             modifier = Modifier
